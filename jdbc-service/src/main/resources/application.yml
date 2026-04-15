@@ -1,0 +1,34 @@
+server:
+  port: 8091
+  shutdown: graceful
+  tomcat:
+    connection-timeout: 300s
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+jdbc-service:
+  connection-timeout-ms: 10000
+  query-timeout-seconds: 300
+  max-schemas: 100
+  max-tables-per-schema: 5000
+  max-columns-per-table: 10000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.df360.jdbc: DEBUG
+    root: INFO

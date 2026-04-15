@@ -1,0 +1,157 @@
+{
+  "connectors": [
+    {
+      "id": "my-postgres",
+      "type": "POSTGRESQL",
+      "host": "localhost",
+      "port": 5432,
+      "user": "postgres",
+      "password": "secret",
+      "database": "mydb",
+      "schemas": ["public"]
+    },
+    {
+      "id": "my-mysql",
+      "type": "MYSQL",
+      "host": "localhost",
+      "port": 3306,
+      "user": "root",
+      "password": "secret",
+      "database": "mydb"
+    },
+    {
+      "id": "my-mssql",
+      "type": "MSSQL",
+      "host": "localhost",
+      "port": 1433,
+      "user": "sa",
+      "password": "secret",
+      "database": "mydb",
+      "schemas": ["dbo"],
+      "encrypt": false,
+      "trustServerCertificate": true
+    },
+    {
+      "id": "my-snowflake",
+      "type": "SNOWFLAKE",
+      "host": "your-account",
+      "port": 443,
+      "user": "your_user",
+      "password": "secret",
+      "database": "MY_DB",
+      "schemas": ["PUBLIC"],
+      "warehouse": "COMPUTE_WH",
+      "lineageLookbackHours": 24
+    },
+    {
+      "id": "my-databricks",
+      "type": "DATABRICKS",
+      "host": "your-workspace.cloud.databricks.com",
+      "port": 443,
+      "user": "token",
+      "password": "dapi_your_token_here",
+      "database": "your_catalog",
+      "schemas": ["default"],
+      "warehouseId": "your_warehouse_id",
+      "lineageLookbackHours": 720,
+      "waitTimeout": "50s",
+      "maxPollIterations": 60,
+      "pollIntervalMs": 2000
+    },
+    {
+      "id": "my-bigquery",
+      "type": "BIGQUERY",
+      "host": "your-project-id",
+      "port": 443,
+      "user": "service-account@your-project.iam.gserviceaccount.com",
+      "password": "./keys/your-service-account-key.json",
+      "database": "your-project-id",
+      "schemas": ["your_dataset"],
+      "region": "region-us",
+      "lineageLookbackHours": 24
+    },
+    {
+      "id": "my-redshift",
+      "type": "REDSHIFT",
+      "host": "your-workgroup.region.redshift-serverless.amazonaws.com",
+      "port": 5439,
+      "user": "admin",
+      "password": "secret",
+      "database": "dev",
+      "lineageLookbackHours": 24,
+      "batchSize": 200,
+      "queryTextSequenceLimit": 16
+    },
+    {
+      "id": "my-oracle",
+      "type": "ORACLE",
+      "host": "localhost",
+      "port": 1521,
+      "user": "your_user",
+      "password": "secret",
+      "database": "XEPDB1"
+    },
+    {
+      "id": "my-dremio",
+      "type": "DREMIO",
+      "host": "api.dremio.cloud",
+      "port": 443,
+      "user": "token",
+      "password": "your_dremio_pat",
+      "database": "your-project",
+      "projectId": "your-project-uuid"
+    },
+    {
+      "id": "my-teradata",
+      "type": "TERADATA",
+      "host": "your-host.clearscape.teradata.com",
+      "port": 1025,
+      "user": "your_user",
+      "password": "secret",
+      "database": "your_db",
+      "schemas": ["your_db"]
+    },
+    {
+      "id": "my-iceberg",
+      "type": "ICEBERG",
+      "host": "localhost",
+      "port": 8181,
+      "user": "token",
+      "password": "your_catalog_token",
+      "database": "your_catalog",
+      "fetchTimeoutMs": 60000
+    }
+  ],
+  "server": {
+    "port": 8090,
+    "shutdownTimeoutMs": 10000,
+    "jsonBodySizeLimit": "1mb"
+  },
+  "discovery": {
+    "connectTimeoutMs": 10000,
+    "cacheTtlHours": 24,
+    "maxCacheEntries": 100
+  },
+  "ingestion": {
+    "baseUrl": "http://localhost:8090/api/v1/ingest",
+    "timeoutMs": 30000
+  },
+  "lineage": {
+    "sourceWeights": {
+      "FK": 100,
+      "OPERATIONAL": 80,
+      "ETL": 60,
+      "MANUAL": 50,
+      "SQL_PARSER": 40
+    }
+  },
+  "scheduler": {
+    "enabled": true,
+    "tickIntervalMs": 5000
+  },
+  "jdbc": {
+    "baseUrl": "http://localhost:8091/api/jdbc",
+    "enabled": true,
+    "timeoutMs": 300000
+  }
+}

@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Config with real credentials
+config.json
+config.json.info
+config.json.save
+config.test.json
+
+# Cached discovery data
+data/
+
+# Keys and secrets
+keys/
+*.pem
+*.key
+.env
+.env.*
+
+# Java JDBC sidecar
+jdbc-service/build/
+jdbc-service/.gradle/
+jdbc-service/libs/
+jdbc-service/bin/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+*.lcov
+
+# Build tool caches
+.turbo/
+.parcel-cache/
+
+# misc
+fix/
+src/temp_test/
+claude/

@@ -1,0 +1,84 @@
+{
+  "name": "mcp-metadata-discovery-jdbc",
+  "version": "1.0.0",
+  "description": "MCP server for database metadata discovery and data lineage — JDBC edition with Java sidecar",
+  "type": "module",
+  "license": "MIT",
+  "author": "Jianmin Wei",
+  "main": "build/index.js",
+  "files": [
+    "build",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/df360-net/MCP-Metadata-Discovery-JDBC.git"
+  },
+  "keywords": [
+    "mcp",
+    "metadata",
+    "discovery",
+    "database",
+    "lineage",
+    "schema",
+    "data-catalog"
+  ],
+  "bugs": {
+    "url": "https://github.com/df360-net/MCP-Metadata-Discovery-JDBC/issues"
+  },
+  "homepage": "https://github.com/df360-net/MCP-Metadata-Discovery-JDBC#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node build/index.js --http --port 8090",
+    "start:stdio": "node build/index.js --stdio",
+    "build": "tsc && npm run build:ui",
+    "build:ui": "webpack --config webpack.config.js --mode production",
+    "dev": "tsc && node build/index.js --http --port 8090",
+    "dev:ui": "webpack serve --config webpack.config.js --mode development",
+    "test": "npx --node-options=--experimental-vm-modules jest",
+    "test:watch": "npx --node-options=--experimental-vm-modules jest --watch",
+    "jdbc:build": "node -e \"const {spawnSync}=require('child_process');const w=process.platform==='win32'?'gradlew.bat':'./gradlew';const r=spawnSync(w,['bootJar'],{cwd:'jdbc-service',stdio:'inherit',shell:process.platform==='win32'});process.exit(r.status||0)\"",
+    "jdbc:service": "java -jar jdbc-service/build/libs/jdbc-discovery-service.jar"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
+    "cors": "^2.8.6",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.3.2",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.23.3",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.11.16",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/supertest": "^7.2.0",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.4",
+    "html-webpack-plugin": "^5.6.6",
+    "jest": "^30.3.0",
+    "postcss": "^8.5.8",
+    "postcss-loader": "^8.2.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "style-loader": "^4.0.0",
+    "supertest": "^7.2.2",
+    "tailwindcss": "^4.2.2",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.3"
+  }
+}

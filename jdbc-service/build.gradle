@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.df360'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // ---- JDBC Drivers (10 databases) ----
+
+    // 1. PostgreSQL
+    runtimeOnly 'org.postgresql:postgresql:42.7.3'
+
+    // 2. MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j:8.3.0'
+
+    // 3. MSSQL
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc:12.6.1.jre11'
+
+    // 4. Oracle (ojdbc11 supports Java 11+)
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11:23.3.0.23.09'
+
+    // 5. Snowflake
+    runtimeOnly 'net.snowflake:snowflake-jdbc:3.16.1'
+
+    // 6. BigQuery (Simba) — NOT in Maven Central, manual JAR in libs/
+    runtimeOnly fileTree(dir: 'libs', include: ['GoogleBigQueryJDBC42*.jar'])
+
+    // 7. Redshift
+    runtimeOnly 'com.amazon.redshift:redshift-jdbc42:2.1.0.29'
+
+    // 8. Databricks — NOT in Maven Central, manual JAR in libs/
+    runtimeOnly fileTree(dir: 'libs', include: ['DatabricksJDBC42*.jar'])
+
+    // 9. Dremio — NOT in Maven Central, manual JAR in libs/
+    runtimeOnly fileTree(dir: 'libs', include: ['dremio-jdbc-driver*.jar'])
+
+    // 10. Teradata
+    runtimeOnly 'com.teradata.jdbc:terajdbc:20.00.00.16'
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+bootJar {
+    archiveFileName = 'jdbc-discovery-service.jar'
+}
+
+test {
+    useJUnitPlatform()
+}
