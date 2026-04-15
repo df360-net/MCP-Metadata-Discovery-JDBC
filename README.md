@@ -1,5 +1,7 @@
 # MCP Metadata Discovery — JDBC Edition
 
+[![CI](https://github.com/df360-net/MCP-Metadata-Discovery-JDBC/actions/workflows/ci.yml/badge.svg)](https://github.com/df360-net/MCP-Metadata-Discovery-JDBC/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/df360-net/MCP-Metadata-Discovery-JDBC)](https://github.com/df360-net/MCP-Metadata-Discovery-JDBC/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Model Context Protocol (MCP) server for automated database metadata discovery and data lineage extraction. This **JDBC edition** uses a Java Spring Boot sidecar service that leverages the standard `java.sql.DatabaseMetaData` API, replacing 10 native Node.js database connectors with a single unified service.
