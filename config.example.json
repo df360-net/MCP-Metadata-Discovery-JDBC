@@ -89,7 +89,8 @@
       "port": 1521,
       "user": "your_user",
       "password": "secret",
-      "database": "XEPDB1"
+      "database": "XEPDB1",
+      "schemas": ["your_app_database"]      
     },
     {
       "id": "my-dremio",

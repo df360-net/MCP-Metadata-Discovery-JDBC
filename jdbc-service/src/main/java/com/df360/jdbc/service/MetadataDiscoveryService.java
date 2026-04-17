@@ -77,8 +77,15 @@ public class MetadataDiscoveryService {
             return new TestConnectionResponse(true, version, latency, null);
         } catch (Exception e) {
             long latency = System.currentTimeMillis() - start;
-            log.error("Connection test failed: {}", e.getMessage());
-            return new TestConnectionResponse(false, null, latency, e.getMessage());
+            log.error("Connection test failed: {}", e.getMessage(), e);
+            // Include the root cause in the response so the UI shows something actionable
+            // instead of a generic driver wrapper like "The connection attempt failed."
+            Throwable root = e;
+            while (root.getCause() != null && root.getCause() != root) {
+                root = root.getCause();
+            }
+            String detail = root == e ? e.getMessage() : e.getMessage() + " — cause: " + root.getClass().getSimpleName() + ": " + root.getMessage();
+            return new TestConnectionResponse(false, null, latency, detail);
         }
     }
 
@@ -95,7 +102,9 @@ public class MetadataDiscoveryService {
         int timeoutSec = resolveTimeoutSeconds(timeoutMs);
 
         try (Connection conn = openConnection(jdbcUrl, props, timeoutSec)) {
-            conn.setReadOnly(true);
+            // Best-effort read-only hint — some drivers (e.g., Databricks OSS JDBC) don't
+            // support it and throw SQLFeatureNotSupportedException. Safe to ignore.
+            try { conn.setReadOnly(true); } catch (Exception ignored) { }
 
             DatabaseMetaData meta = conn.getMetaData();
             String version = meta.getDatabaseProductName() + " " + meta.getDatabaseProductVersion();

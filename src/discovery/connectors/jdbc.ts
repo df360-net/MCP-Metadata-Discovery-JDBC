@@ -34,8 +34,10 @@ function assertJdbcSafe(fieldName: string, value: string | undefined | null): st
   if (value === undefined || value === null || value === '') {
     throw new Error(`JDBC config field "${fieldName}" is required`);
   }
-  // Allow backslash for MSSQL named instances (e.g., "SERVER\SQLEXPRESS").
-  if (!/^[A-Za-z0-9_.\-:\\]+$/.test(value)) {
+  // Allow backslash for MSSQL named instances (e.g., "SERVER\SQLEXPRESS") and
+  // `@` for BigQuery service-account emails (e.g., "sa@project.iam.gserviceaccount.com").
+  // `@` is never a JDBC URL structural character at the positions we interpolate into.
+  if (!/^[A-Za-z0-9_.\-:\\@]+$/.test(value)) {
     throw new Error(`JDBC config field "${fieldName}" contains disallowed characters`);
   }
   return value;
@@ -95,14 +97,17 @@ function buildJdbcUrl(type: DatabaseType, config: ConnectionConfig): string {
 
     case 'DATABRICKS': {
       const warehouseId = assertJdbcSafeOptional('warehouseId', config.warehouseId, '0');
-      // Password is bound via driver Properties; do not interpolate into the URL.
+      // Password is bound via driver Properties (key "PWD") in the HTTP request body.
+      // httpPath format is /sql/1.0/warehouses/{id} for SQL warehouses (serverless/pro/classic).
       return `jdbc:databricks://${host}:${port}`
-        + `;httpPath=sql/protocolv1/o/0/${warehouseId}`
+        + `;httpPath=/sql/1.0/warehouses/${warehouseId}`
         + `;AuthMech=3;UID=token`;
     }
 
     case 'DREMIO':
-      return `jdbc:dremio:direct=${host}:${port}`;
+      // Apache Arrow Flight SQL driver (required for Dremio Cloud, recommended for Software).
+      // Credentials are bound via driver Properties (user/password), not interpolated here.
+      return `jdbc:arrow-flight-sql://${host}:${port}/?useEncryption=true`;
 
     case 'TERADATA':
       return `jdbc:teradata://${host}/DATABASE=${database}`;
@@ -110,6 +115,23 @@ function buildJdbcUrl(type: DatabaseType, config: ConnectionConfig): string {
     default:
       throw new Error(`No JDBC URL template for database type: ${type}`);
   }
+}
+
+/**
+ * Extra driver-level Properties that must be bound outside the JDBC URL.
+ * Databricks with `AuthMech=3;UID=token` expects the PAT in the `PWD` property.
+ * Dremio Cloud (Arrow Flight SQL) requires bearer-token auth via the `token` property;
+ * basic user/password is rejected with a `ClientHandshakeWrapper: Failed with unknown`.
+ * Binding these here keeps the token out of the JDBC URL.
+ */
+function buildDriverProperties(type: DatabaseType, config: ConnectionConfig): Record<string, string> | undefined {
+  if (type === 'DATABRICKS' && config.password) {
+    return { PWD: config.password };
+  }
+  if (type === 'DREMIO' && config.password) {
+    return { token: config.password };
+  }
+  return undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -145,6 +167,7 @@ export class JdbcConnector implements DiscoveryConnector {
           databaseType: this.type,
           databaseName: config.database,
           timeoutMs: config.connectTimeout,
+          properties: buildDriverProperties(this.type, config),
         }),
         signal: controller.signal,
       });
@@ -194,6 +217,7 @@ export class JdbcConnector implements DiscoveryConnector {
           databaseName: config.database,
           databaseType: this.type,
           timeoutMs: this.timeoutMs,
+          properties: buildDriverProperties(this.type, config),
         }),
         signal: controller.signal,
       });

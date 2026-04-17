@@ -41,17 +41,25 @@ dependencies {
     // 5. Snowflake
     runtimeOnly 'net.snowflake:snowflake-jdbc:3.16.1'
 
-    // 6. BigQuery (Simba) — NOT in Maven Central, manual JAR in libs/
-    runtimeOnly fileTree(dir: 'libs', include: ['GoogleBigQueryJDBC42*.jar'])
+    // 6. BigQuery (Simba) — NOT in Maven Central, manual driver in libs/bigquery/
+    //    The Simba BigQuery JDBC driver ships as a folder of ~40 JARs (main driver + Google API,
+    //    Avro, gRPC, gson, etc.). Extract the driver ZIP and drop the entire folder contents into
+    //    `libs/bigquery/`. Exclude the bundled slf4j-api (2.x) because it conflicts with Spring
+    //    Boot's own slf4j-api (1.7.x) + logback binding — the version mismatch makes SLF4J fall
+    //    back to NOP and silences all logging.
+    runtimeOnly fileTree(dir: 'libs/bigquery', include: ['*.jar'], exclude: ['slf4j-api-*.jar', 'logback-*.jar', 'log4j-*.jar'])
 
     // 7. Redshift
     runtimeOnly 'com.amazon.redshift:redshift-jdbc42:2.1.0.29'
 
     // 8. Databricks — NOT in Maven Central, manual JAR in libs/
-    runtimeOnly fileTree(dir: 'libs', include: ['DatabricksJDBC42*.jar'])
+    runtimeOnly fileTree(dir: 'libs', include: ['DatabricksJDBC*.jar'])
 
     // 9. Dremio — NOT in Maven Central, manual JAR in libs/
-    runtimeOnly fileTree(dir: 'libs', include: ['dremio-jdbc-driver*.jar'])
+    //    Matches both the legacy driver (`dremio-jdbc-driver-*.jar`, Dremio Software only)
+    //    and the newer Apache Arrow Flight SQL driver (`flight-sql-jdbc-driver-*.jar`,
+    //    required for Dremio Cloud).
+    runtimeOnly fileTree(dir: 'libs', include: ['dremio-jdbc-driver*.jar', 'flight-sql-jdbc-driver*.jar'])
 
     // 10. Teradata
     runtimeOnly 'com.teradata.jdbc:terajdbc:20.00.00.16'

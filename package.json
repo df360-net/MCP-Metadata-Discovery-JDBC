@@ -42,7 +42,7 @@
     "test": "npx --node-options=--experimental-vm-modules jest",
     "test:watch": "npx --node-options=--experimental-vm-modules jest --watch",
     "jdbc:build": "node -e \"const {spawnSync}=require('child_process');const w=process.platform==='win32'?'gradlew.bat':'./gradlew';const r=spawnSync(w,['bootJar'],{cwd:'jdbc-service',stdio:'inherit',shell:process.platform==='win32'});process.exit(r.status||0)\"",
-    "jdbc:service": "java -jar jdbc-service/build/libs/jdbc-discovery-service.jar"
+    "jdbc:service": "java --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED -jar jdbc-service/build/libs/jdbc-discovery-service.jar"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.1",
